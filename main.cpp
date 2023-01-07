@@ -7,8 +7,8 @@ using namespace std;
 //задание 1
 
 struct Student {
-    string surname;
-    string group;
+    char surname[20];
+    int group;
     double grade[5]{0};
 };
 
@@ -41,15 +41,15 @@ void Prints_Students(Student arr[], size_t size) {
 }
 
 
-Student Structure_filling(string surnames, string groupe) {
+Student Structure_filling(char *surnames, int groupe) {
     Student stud;
-    stud.surname = surnames;
-    stud.group = groupe;
+    *strncpy(stud.surname, surnames, (strlen(surnames)+1));
+    stud.group=groupe;
     Entering_grades(stud);
     return stud;
 }
 
-Student *Resize_an_array(Student arr[], size_t size, size_t new_size) {
+Student *Resize_an_array(Student arr[], size_t size, size_t &new_size) {
     Student *arr2 = new Student[new_size];
     for (int i = 0; i < new_size; i++) {
         arr2[i] = arr[i];
@@ -58,7 +58,7 @@ Student *Resize_an_array(Student arr[], size_t size, size_t new_size) {
     return arr2;
 }
 
-Student *Honors_List(Student arr[], size_t size) {
+Student *Honors_List(Student arr[], size_t size, size_t &new_size) {
     Student *arr2 = new Student[size];
     size_t count = 0;
     for (int i = 0; i, size; i++) {
@@ -67,11 +67,12 @@ Student *Honors_List(Student arr[], size_t size) {
             count++;
         }
     }
+    new_size = count;
     arr2 = Resize_an_array(arr2, size, count);
     return arr2;
 }
 
-Student *List_of_losers(Student arr[], size_t size) {
+Student *List_of_losers(Student arr[], size_t size, size_t &new_size) {
     Student *arr2 = new Student[size];
     size_t count = 0;
     for (int i = 0; i, size; i++) {
@@ -80,24 +81,31 @@ Student *List_of_losers(Student arr[], size_t size) {
             count++;
         }
     }
+    new_size = count;
     arr2 = Resize_an_array(arr2, size, count);
     return arr2;
 }
 
 int main() {
-    const size_t size = 2;
-    Student students[size];
-    string surnam, groupes;
+    size_t size = 4;
+    Student *students = new Student[size];
+    char surnam[20];
+    int groupes;
     for (int i = 0; i < size; i++) {
         cout << "Enter last name and group:";
-        cin >> surnam >> groupes;
+        cin >> surnam;
+        cin>> groupes;
         students[i] = Structure_filling(surnam, groupes);
     }
-    size_t new_size;
-//    cout << "Enter new array size:";
-//    cin >> new_size;
-    // Student *new_students = Resize_an_array(students, size, new_size);
     Prints_Students(students, size);
-   
+    size_t new_size = 10;
+    cout << "Enter new array size:";
+    cin >> new_size;
+   // Student *new_students = Resize_an_array(students, size, new_size);
+
+    Student *stud=new Student[new_size];
+    stud= Honors_List(students, size, new_size);
+    Prints_Students(stud, new_size);
+
 
 }
