@@ -90,8 +90,8 @@ Student *List_of_losers(Student arr[], size_t size, size_t &new_size) {
 
 
 struct Man {
-    char *Family[20];
-    char *Name[10];
+    char Family[20];
+    char Name[10];
     int age;
     int day;
     int month;
@@ -107,8 +107,8 @@ void Print(char *str) {
 
 void Print_Man(Man *man, size_t size) {
     for (int i = 0; i < size; i++) {
-        Print(*man[i].Family);
-        Print(*man[i].Name);
+        Print(man[i].Family);
+        Print(man[i].Name);
         cout << " : " << man[i].age << " years old" << endl;
         cout << "Date of Birth: " << man[i].day << "." << man[i].month << "." << man[i].year << endl;
     }
@@ -181,8 +181,8 @@ void Editing_a_Post(Man &man, char *Family, char *Name,
     man.day = day;
     man.year = year;
     man.age = age;
-    strncpy(*man.Family, Family, strlen(Family) );
-    strncpy(*man.Name, Name, strlen(Name) );
+    strncpy(man.Family, Family, strlen(Family));
+    strncpy(man.Name, Name, strlen(Name));
 
 }
 
@@ -223,6 +223,5 @@ int main() {
     size_t size = 1;
     Man *man = new Man[size];
     Editing_a_Post(man[0], "petrov", "petr", 29, 24, 9, 1990);
-    cout<<"yes";
     Print_Man(man, size);
 }
