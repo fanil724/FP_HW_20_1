@@ -117,8 +117,7 @@ void Print_Man(Man *man, size_t size) {
 void Sort_by_Last_Name(Man man[], size_t size) {
     for (int i = 0; i < size - 1; i++) {
         for (int j = i + 1; j < size; j++) {
-            if (strcmp(reinterpret_cast<const char *>(man[i].Family), reinterpret_cast<const char *>(man[j].Family)) <
-                0) {
+            if (strcmp(man[i].Family, man[j].Family) < 0) {
                 swap(man[i], man[j]);
             }
         }
@@ -128,7 +127,7 @@ void Sort_by_Last_Name(Man man[], size_t size) {
 void Sort_by_Name(Man man[], size_t size) {
     for (int i = 0; i < size - 1; i++) {
         for (int j = i + 1; j < size; j++) {
-            if (strcmp(reinterpret_cast<const char *>(man[i].Name), reinterpret_cast<const char *>(man[j].Name)) < 0) {
+            if (strcmp(man[i].Name, man[j].Name) < 0) {
                 swap(man[i], man[j]);
             }
         }
@@ -150,7 +149,7 @@ void Print_Birthday_People(Man *m, size_t size, int month) {
 
 int Search_by_Last_Name(Man *m, size_t size, const char *family) {
     for (int i = 0; i < size; i++) {
-        if ((strcmp(reinterpret_cast<const char *>(m[i].Family), family)) == 0) {
+        if ((strcmp(m[i].Family, family)) == 0) {
             return i;
         }
     }
@@ -159,19 +158,20 @@ int Search_by_Last_Name(Man *m, size_t size, const char *family) {
 
 int Search_by_Name(Man *m, size_t size, const char *name) {
     for (int i = 0; i < size; i++) {
-        if ((strcmp(reinterpret_cast<const char *>(m[i].Name), name)) == 0) {
+        if ((strcmp(m[i].Name, name)) == 0) {
             return i;
         }
     }
     return -1;
 }
 
-Man *reolocate(Man man[], size_t size, size_t &new_size) {
+Man *reolocate(Man *man, size_t size, size_t new_size) {
     Man *m = new Man[new_size];
-    for (int i = 0; i < (size < new_size ? size : new_size); i++) {
+    int count = (new_size < size ? new_size : size);
+    for (int i = 0; i < count; i++) {
         m[i] = man[i];
     }
-    delete[] man;
+    //delete[] man;
     return m;
 }
 
@@ -181,15 +181,30 @@ void Editing_a_Post(Man &man, char *Family, char *Name,
     man.day = day;
     man.year = year;
     man.age = age;
-    strncpy(man.Family, Family, strlen(Family));
-    strncpy(man.Name, Name, strlen(Name));
+    strncpy(man.Family, Family, strlen(Family) + 1);
+    strncpy(man.Name, Name, strlen(Name) + 1);
 
 }
 
-Man *Adding_to_Array(Man *m, size_t size, size_t new_size, char *Family, char *Name,
-                     int age, int day, int month, int year) {
-    Man *man = reolocate(m, size, new_size);
+Man *adding_record_to_array(Man *m, size_t size, size_t &new_size, char *Family, char *Name,
+                            int age, int day, int month, int year) {
+    new_size = size + 1;
+    Man *man = new Man[new_size];
+    man = reolocate(m, size, new_size);
+    cout << new_size;
     Editing_a_Post(man[new_size - 1], Family, Name, age, day, month, year);
+    return man;
+}
+
+Man *removing_records_from_array(Man *m, size_t size, size_t &new_size, int index) {
+    if (index<size) {
+        for (int i = index; i < size; i++) {
+            swap(m[i], m[i + 1]);
+        }
+    }
+    new_size = size - 1;
+    Man *man = new Man[new_size];
+    man = reolocate(m, size, new_size);
     return man;
 }
 
@@ -220,8 +235,17 @@ int main() {
 //    Prints_Students(studs, newsize);
 //    cout << endl;
 
-    size_t size = 1;
-    Man *man = new Man[size];
-    Editing_a_Post(man[0], "petrov", "petr", 29, 24, 9, 1990);
+    const size_t size = 4;
+    size_t new_size, size2;
+    Man man[size];
+    for (int i = 0; i < size; i++) {
+        Editing_a_Post(man[i], "petrov", "petr", 29, 24, 9, 1990);
+    }
     Print_Man(man, size);
+    cout << "\n";
+    Man *M = adding_record_to_array(man, size, new_size, "petrov", "petr", 29, 24, 9, 1990);
+    Print_Man(M, new_size);
+    cout << "\n"<<new_size;
+    Man *Man = removing_records_from_array(M,  new_size,size2, 2);
+    Print_Man(Man, new_size);
 }
