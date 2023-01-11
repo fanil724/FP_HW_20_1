@@ -167,8 +167,8 @@ int Search_by_Name(Man *m, size_t size, const char *name) {
 
 Man *reolocate(Man *man, size_t size, size_t new_size) {
     Man *m = new Man[new_size];
-    int count = (new_size < size ? new_size : size);
-    for (int i = 0; i < count; i++) {
+
+    for (int i = 0; (i < size || i < new_size); i++) {
         m[i] = man[i];
     }
     //delete[] man;
@@ -189,22 +189,22 @@ void Editing_a_Post(Man &man, char *Family, char *Name,
 Man *adding_record_to_array(Man *m, size_t size, size_t &new_size, char *Family, char *Name,
                             int age, int day, int month, int year) {
     new_size = size + 1;
-    Man *man = new Man[new_size];
-    man = reolocate(m, size, new_size);
-    cout << new_size;
+    Man *man = reolocate(m, size, new_size);
     Editing_a_Post(man[new_size - 1], Family, Name, age, day, month, year);
     return man;
 }
 
 Man *removing_records_from_array(Man *m, size_t size, size_t &new_size, int index) {
-    if (index<size) {
+    if (index < size) {
         for (int i = index; i < size; i++) {
             swap(m[i], m[i + 1]);
+
         }
     }
     new_size = size - 1;
-    Man *man = new Man[new_size];
-    man = reolocate(m, size, new_size);
+
+    Man *man = reolocate(m, size, new_size);
+    cout<<"ok\n";
     return man;
 }
 
@@ -240,12 +240,15 @@ int main() {
     Man man[size];
     for (int i = 0; i < size; i++) {
         Editing_a_Post(man[i], "petrov", "petr", 29, 24, 9, 1990);
+        i++;
+        Editing_a_Post(man[i], "sidorov", "ivan", 49, 31, 12, 1980);
+
     }
     Print_Man(man, size);
     cout << "\n";
-    Man *M = adding_record_to_array(man, size, new_size, "petrov", "petr", 29, 24, 9, 1990);
+    Man *M = adding_record_to_array(man, size, new_size, "bulkin", "sasha", 19, 4, 6, 2002);
     Print_Man(M, new_size);
-    cout << "\n"<<new_size;
+    cout << "\n" << Search_by_Name(M, new_size, "sasha")<<"\n";
     Man *Man = removing_records_from_array(M,  new_size,size2, 2);
-    Print_Man(Man, new_size);
+    Print_Man(Man, size2);
 }
