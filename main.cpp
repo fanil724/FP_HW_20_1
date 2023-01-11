@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cstring>
 
-
 using namespace std;
 
 //задание 1
@@ -107,11 +106,13 @@ void Print(char *str) {
 
 void Print_Man(Man *man, size_t size) {
     for (int i = 0; i < size; i++) {
+        cout << i << ": ";
         Print(man[i].Family);
         Print(man[i].Name);
         cout << " : " << man[i].age << " years old" << endl;
         cout << "Date of Birth: " << man[i].day << "." << man[i].month << "." << man[i].year << endl;
     }
+    cout << "\n";
 }
 
 void Sort_by_Last_Name(Man man[], size_t size) {
@@ -138,7 +139,7 @@ void Print_Birthday_People(Man *m, size_t size, int month) {
     int count = 0;
     for (int i = 0; i < size; i++) {
         if (m[i].month == month) {
-            cout << m[i].Family << " " << m[i].Name << "-" << m[i].day << "." << m[i].month;
+            cout << m[i].Family << " " << m[i].Name << "-" << m[i].day << "." << m[i].month << "\n";
             count++;
         }
     }
@@ -165,9 +166,8 @@ int Search_by_Name(Man *m, size_t size, const char *name) {
     return -1;
 }
 
-Man *reolocate(Man *man, size_t size, size_t new_size) {
+Man *reolocate(Man man[], size_t size, size_t new_size) {
     Man *m = new Man[new_size];
-
     for (int i = 0; (i < size || i < new_size); i++) {
         m[i] = man[i];
     }
@@ -195,16 +195,13 @@ Man *adding_record_to_array(Man *m, size_t size, size_t &new_size, char *Family,
 }
 
 Man *removing_records_from_array(Man *m, size_t size, size_t &new_size, int index) {
+    new_size = size - 1;
     if (index < size) {
-        for (int i = index; i < size; i++) {
+        for (int i = index; i < size - 1; i++) {
             swap(m[i], m[i + 1]);
-
         }
     }
-    new_size = size - 1;
-
     Man *man = reolocate(m, size, new_size);
-    cout<<"ok\n";
     return man;
 }
 
@@ -235,20 +232,21 @@ int main() {
 //    Prints_Students(studs, newsize);
 //    cout << endl;
 
-    const size_t size = 4;
+    const size_t size = 10;
     size_t new_size, size2;
     Man man[size];
     for (int i = 0; i < size; i++) {
         Editing_a_Post(man[i], "petrov", "petr", 29, 24, 9, 1990);
         i++;
         Editing_a_Post(man[i], "sidorov", "ivan", 49, 31, 12, 1980);
-
     }
     Print_Man(man, size);
     cout << "\n";
     Man *M = adding_record_to_array(man, size, new_size, "bulkin", "sasha", 19, 4, 6, 2002);
+    // Sort_by_Name(M,new_size);
     Print_Man(M, new_size);
-    cout << "\n" << Search_by_Name(M, new_size, "sasha")<<"\n";
-    Man *Man = removing_records_from_array(M,  new_size,size2, 2);
+    Print_Birthday_People(M, new_size, 12);
+//    cout << "\n" << Search_by_Name(M, new_size, "sasha") << "\n";
+    Man *Man = removing_records_from_array(M, new_size, size2, 8);
     Print_Man(Man, size2);
 }
