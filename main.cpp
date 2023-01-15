@@ -7,7 +7,7 @@ using namespace std;
 
 struct Student {
     char surname[20];
-    int group;
+    char group[20];
     double grade[5]{0};
 };
 
@@ -40,10 +40,10 @@ void Prints_Students(Student arr[], size_t size) {
 }
 
 
-Student Structure_filling(char *surnames, int groupe) {
+Student Structure_filling(char *surnames, char *groupe) {
     Student stud;
     strncpy(stud.surname, surnames, (strlen(surnames) + 1));
-    stud.group = groupe;
+    strncpy(stud.group, groupe, (strlen(groupe) + 1));
     Entering_grades(stud);
     return stud;
 }
@@ -166,31 +166,33 @@ int Search_by_Name(Man *m, size_t size, const char *name) {
     return -1;
 }
 
-Man *reolocate(Man man[], size_t size, size_t new_size) {
+Man *reolocate(Man *&man, size_t size, size_t new_size) {
     Man *m = new Man[new_size];
-    for (int i = 0; (i < size || i < new_size); i++) {
+    for (int i = 0; (i < min(size, new_size)); i++) {
         m[i] = man[i];
     }
-    //delete[] man;
+    delete[] man;
+    man = m;
     return m;
 }
 
-void Editing_a_Post(Man &man, char *Family, char *Name,
-                    int age, int day, int month, int year) {
+Man Editing_a_Post(char *Family, char *Name,
+                   int age, int day, int month, int year) {
+    Man man;
     man.month = month;
     man.day = day;
     man.year = year;
     man.age = age;
     strncpy(man.Family, Family, strlen(Family) + 1);
     strncpy(man.Name, Name, strlen(Name) + 1);
-
+    return man;
 }
 
 Man *adding_record_to_array(Man *m, size_t size, size_t &new_size, char *Family, char *Name,
                             int age, int day, int month, int year) {
     new_size = size + 1;
     Man *man = reolocate(m, size, new_size);
-    Editing_a_Post(man[new_size - 1], Family, Name, age, day, month, year);
+    man[new_size - 1] = Editing_a_Post(Family, Name, age, day, month, year);
     return man;
 }
 
@@ -198,7 +200,7 @@ Man *removing_records_from_array(Man *m, size_t size, size_t &new_size, int inde
     new_size = size - 1;
     if (index < size) {
         for (int i = index; i < size - 1; i++) {
-            swap(m[i], m[i + 1]);
+            m[i] = m[i + 1];
         }
     }
     Man *man = reolocate(m, size, new_size);
@@ -210,7 +212,7 @@ int main() {
 //    size_t size = 5;
 //    Student *students = new Student[size];
 //    char surnam[20];
-//    int groupes;
+//    char groupes[20];
 //    for (int i = 0; i < size; i++) {
 //        cout << "Enter last name and group:";
 //        cin >> surnam;
@@ -232,13 +234,13 @@ int main() {
 //    Prints_Students(studs, newsize);
 //    cout << endl;
 
-    const size_t size = 10;
+    size_t size = 10;
     size_t new_size, size2;
-    Man man[size];
+    Man *man=new Man[size]{0};
     for (int i = 0; i < size; i++) {
-        Editing_a_Post(man[i], "petrov", "petr", 29, 24, 9, 1990);
+        man[i] = Editing_a_Post("petrov", "petr", 29, 24, 9, 1990);
         i++;
-        Editing_a_Post(man[i], "sidorov", "ivan", 49, 31, 12, 1980);
+        man[i] = Editing_a_Post("sidorov", "ivan", 49, 31, 12, 1980);
     }
     Print_Man(man, size);
     cout << "\n";
